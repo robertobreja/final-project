@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "title": "Product 1",
+        "description": "Product 1 description",
+        "price": 10.5,
+        "images": [
+            "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+            "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg"
+        ],
+        "stock": 5,
+        "size": "M",
+        "categories": ["sport", "modern"]
+
+    },
+    {
+        "id": 2,
+        "title": "Product 1",
+        "description": "Product 1 description",
+        "price": 10.5,
+        "images": [
+            "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+            "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg"
+        ],
+        "stock": 5,
+        "size": "M",
+        "categories": ["jeans", "denim"]
+    },
+    {
+        "id": 3,
+        "title": "Product 1",
+        "description": "Product 1 description",
+        "price": 10.5,
+        "images": [
+            "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+            "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg"
+        ],
+        "stock": 5,
+        "size": "M",
+        "categories": ["casual"]
+
+    }
+
+]
