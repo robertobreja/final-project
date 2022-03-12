@@ -47,15 +47,24 @@ function Cart() {
     return (
         <div>
             <h1>Cart</h1>
+
+            <div className="row fw-bold">
+                <div className="col-1">Image</div>
+                <div className="col-3">Title</div>
+                <div className="col-3">Quantity</div>
+                <div className="col-3">Total price</div>
+                <div className="col-2"></div>
+            </div>
+
             {cart.map((cartItem) => (
-                <div key={cartItem.productId}>
+                <div key={cartItem.productId} className="row align-items-center my-3">
                     <img
                         src={getProduct(cartItem.productId).images[0]}
                         alt="product"
-                        width="50px"
+                        className="col-1"
                     />
-                    <small>{getProduct(cartItem.productId).title}</small>{" "}
-                    <small>
+                    <small className="col-3 fs-3">{getProduct(cartItem.productId).title}</small>
+                    <small className="col-3 fs-3">
                         <input
                             type="number"
                             defaultValue={cartItem.quantity}
@@ -69,18 +78,22 @@ function Cart() {
                             }
                         />{" "}
                         /{getProduct(cartItem.productId).stock}
-                    </small>{" "}
-                    <small>
+                    </small>
+                    <small className="col-3 fs-3">
                         {cartItem.quantity *
                             getProduct(cartItem.productId).price}{" "}
                         Lei
                     </small>
-                    <button onClick={() => deleteProduct(cartItem.productId)}>
+                    <div className="col-2 btn btn-danger" onClick={() => deleteProduct(cartItem.productId)}>
                         Delete product
-                    </button>
+                    </div>
                 </div>
             ))}
-        {cart.length > 0 ? <h3>Total: {getTotalPrice()} Lei</h3> : <p>No products in cart.</p>}
+            {cart.length > 0 ? (
+                <h3 className="fs-1 fw-bold">Total: {getTotalPrice()} Lei</h3>
+            ) : (
+                <p>No products in cart.</p>
+            )}
         </div>
     );
 }
