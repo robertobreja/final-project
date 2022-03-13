@@ -1,30 +1,43 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import products from "../Products/products.json";
 
 function ProductDetails() {
     const { productId } = useParams();
+    const [currentProduct, setCurrentProduct] = useState(null);
     const [currentQuantity, setCurrentQuantity] = useState(0);
-    const currentProduct = products.find((product) => product.id == productId);
+
     useEffect(() => {
-        const cartData = localStorage.getItem('cartKey');
+        fetch(`https://fakestoreapi.com/products/${productId}`)
+            .then((res) => res.json())
+            .then((productDetails) => {
+                console.log(productDetails);
 
-        if (cartData) {
-            const cart = JSON.parse(cartData);
-            const currentCartItem = cart.find((cartItem) => cartItem.productId === productId);
-            if (currentCartItem) {
-                setCurrentQuantity(currentCartItem.quantity);
-            }
-        }
-    }, [])
+                if (productDetails) {
+                    setCurrentProduct(productDetails);
 
-    
+                    const cartData = localStorage.getItem("cartKey");
+
+                    if (cartData) {
+                        const cart = JSON.parse(cartData);
+
+                        const currentCartItem = cart.find(
+                            (cartItem) => cartItem.productId === productId
+                        );
+
+                        if (currentCartItem) {
+                            setCurrentQuantity(currentCartItem.quantity);
+                        }
+                    }
+                }
+            });
+    }, []);
+
     if (!currentProduct) {
         return <div>Not found</div>;
     }
     const addToCart = () => {
         const cartData = localStorage.getItem("cartKey");
-        if (!cartData && currentProduct.stock > 0) {
+        if (!cartData) {
             const cart = [
                 {
                     productId,
@@ -38,20 +51,17 @@ function ProductDetails() {
             const currentCartItem = cart.find(
                 (cartItem) => cartItem.productId === productId
             );
-            if (
-                currentCartItem &&
-                currentProduct.stock > currentCartItem.quantity
-            ) {
+            if (currentCartItem) {
                 currentCartItem.quantity++;
-                setCurrentQuantity(currentQuantity + 1)
-            } else if (!currentCartItem && currentProduct.stock > 0) {
+                setCurrentQuantity(currentQuantity + 1);
+            } else {
                 cart.push({
                     productId,
                     quantity: 1,
                 });
-                setCurrentQuantity(1)
+                setCurrentQuantity(1);
             }
-            
+
             localStorage.setItem("cartKey", JSON.stringify(cart));
         }
     };
@@ -69,26 +79,19 @@ function ProductDetails() {
                         data-bs-ride="carousel"
                     >
                         <div className="carousel-inner">
-                            {currentProduct.images.map((url, index) => (
-                                <div
-                                    key={index}
-                                    className={
-                                        "carousel-item" +
-                                        (index === 0 ? " active" : "")
-                                    }
-                                >
-                                    <img
-                                        src={url}
-                                        className="d-block"
-                                        height="600px"
-                                        style={{
-                                            marginLeft: "auto",
-                                            marginRight: "auto",
-                                        }}
-                                        alt="product"
-                                    />
-                                </div>
-                            ))}
+                            <div className="carousel-item active">
+                                <img
+                                    src={currentProduct.image}
+                                    className="d-block"
+                                    style={{
+                                        marginLeft: "auto",
+                                        marginRight: "auto",
+                                        maxWidth: "100%",
+                                        maxHeight: "600px",
+                                    }}
+                                    alt="product"
+                                />
+                            </div>
                         </div>
                         <button
                             className="carousel-control-prev"
@@ -117,11 +120,19 @@ function ProductDetails() {
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-12 col-xs-12">
-                    <p className="fs-4"><strong>Stock:</strong> {currentProduct.stock}</p>
-                    <p className="fs-4"><strong>Size:</strong> {currentProduct.size}</p>
-                    <p className="fs-4"> <strong>Categories: </strong>{currentProduct.categories.join(", ")}</p>
+                    <p className="fs-4">
+                        <strong>Rating:</strong> {currentProduct.rating.rate}
+                    </p>
+
+                    <p className="fs-4">
+                        {" "}
+                        <strong>Category: </strong>
+                        {currentProduct.category}
+                    </p>
                     <p className="fs-1 fw-bold">{currentProduct.price} Lei</p>
-                    <div className="btn btn-success" onClick={addToCart}>Add to cart ({currentQuantity})</div>
+                    <div className="btn btn-success" onClick={addToCart}>
+                        Add to cart ({currentQuantity})
+                    </div>
                 </div>
             </div>
         </div>

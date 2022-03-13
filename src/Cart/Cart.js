@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import products from "../Products/products.json";
 
 function Cart() {
     const [cart, setCart] = useState([]);
+    const [products, setProducts] = useState([]);
+
     useEffect(() => {
-        const cartData = localStorage.getItem("cartKey");
-        if (cartData) {
-            setCart(JSON.parse(cartData));
-        }
+        fetch("https://fakestoreapi.com/products")
+            .then((res) => res.json())
+            .then((allProducts) => {
+                setProducts(allProducts);
+                const cartData = localStorage.getItem("cartKey");
+                if (cartData) {
+                    setCart(JSON.parse(cartData));
+                }
+            });
     }, []);
     const getProduct = (productId) => {
         return products.find((product) => product.id == productId);
@@ -17,20 +23,17 @@ function Cart() {
         for (const cartItem of cart) {
             sum += cartItem.quantity * getProduct(cartItem.productId).price;
         }
-        return sum;
+        return sum.toFixed(2);
     };
 
     const updateProductQuantity = (productId, newQuantity) => {
-        const product = getProduct(productId);
         const currentCartItem = cart.find(
             (cartItem) => cartItem.productId === productId
         );
         if (newQuantity < 1 || !newQuantity) {
             currentCartItem.quantity = 1;
-        } else if (newQuantity <= product.stock) {
-            currentCartItem.quantity = newQuantity;
         } else {
-            currentCartItem.quantity = product.stock;
+            currentCartItem.quantity = newQuantity;
         }
         localStorage.setItem("cartKey", JSON.stringify(cart));
         setCart([...cart]);
@@ -57,34 +60,43 @@ function Cart() {
             </div>
 
             {cart.map((cartItem) => (
-                <div key={cartItem.productId} className="row align-items-center my-3">
+                <div
+                    key={cartItem.productId}
+                    className="row align-items-center my-3"
+                >
                     <img
-                        src={getProduct(cartItem.productId).images[0]}
+                        src={getProduct(cartItem.productId).image}
                         alt="product"
                         className="col-1"
                     />
-                    <small className="col-3 fs-3">{getProduct(cartItem.productId).title}</small>
+                    <small className="col-3 fs-3 product-title">
+                        {getProduct(cartItem.productId).title}
+                    </small>
                     <small className="col-3 fs-3">
                         <input
                             type="number"
                             defaultValue={cartItem.quantity}
                             min={1}
-                            max={getProduct(cartItem.productId).stock}
+                            style={{ width: "100%" }}
                             onChange={(e) =>
                                 updateProductQuantity(
                                     cartItem.productId,
                                     e.target.valueAsNumber
                                 )
                             }
-                        />{" "}
-                        /{getProduct(cartItem.productId).stock}
+                        />
                     </small>
-                    <small className="col-3 fs-3">
-                        {cartItem.quantity *
-                            getProduct(cartItem.productId).price}{" "}
+                    <small className="col-3 fs-3 product-title">
+                        {(
+                            cartItem.quantity *
+                            getProduct(cartItem.productId).price
+                        ).toFixed(2)}{" "}
                         Lei
                     </small>
-                    <div className="col-2 btn btn-danger" onClick={() => deleteProduct(cartItem.productId)}>
+                    <div
+                        className="col-2 btn btn-danger"
+                        onClick={() => deleteProduct(cartItem.productId)}
+                    >
                         Delete product
                     </div>
                 </div>
